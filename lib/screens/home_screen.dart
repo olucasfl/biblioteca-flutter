@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/dados.dart';
 import '../models/avaliacao.dart';
 import '../models/livro.dart';
+import '../widgets/capa_livro.dart';
 import '../widgets/estrelas.dart';
 import 'criar_livro_screen.dart';
 import 'detalhe_screen.dart';
@@ -69,25 +70,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _capa(Livro livro,
       {double width = 56, double height = 80, double fontSize = 26}) {
-    return Container(
+    return CapaLivro(
+      livro: livro,
       width: width,
       height: height,
-      decoration: BoxDecoration(
-        color: Color(livro.corCapa),
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 2)),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        livro.titulo[0],
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      fontSize: fontSize,
     );
   }
 

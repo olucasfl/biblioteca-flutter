@@ -7,6 +7,7 @@ class Livro {
   final int corCapa;
   final String emailCriador;
   final String nomeCriador;
+  final String? imagePath;
 
   const Livro({
     required this.id,
@@ -17,5 +18,6 @@ class Livro {
     required this.corCapa,
     required this.emailCriador,
     required this.nomeCriador,
+    this.imagePath,
   });
 }

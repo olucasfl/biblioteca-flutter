@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../data/dados.dart';
 import '../models/livro.dart';
 
@@ -23,6 +25,7 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
   final _generoController = TextEditingController();
   String _generoSelecionado = '';
   String _erro = '';
+  String? _imagePath;
 
   static const _generos = [
     'Aventura',
@@ -48,6 +51,14 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
     super.dispose();
   }
 
+  Future<void> _escolherImagem() async {
+    final picker = ImagePicker();
+    final imagem = await picker.pickImage(source: ImageSource.gallery);
+    if (imagem != null) {
+      setState(() => _imagePath = imagem.path);
+    }
+  }
+
   void _salvar() {
     final titulo = _tituloController.text.trim();
     final autor = _autorController.text.trim();
@@ -67,6 +78,7 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
       corCapa: Dados.gerarCorCapa(titulo),
       emailCriador: widget.emailUsuario,
       nomeCriador: widget.nomeUsuario,
+      imagePath: _imagePath,
     ));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -90,6 +102,42 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: GestureDetector(
+                onTap: _escolherImagem,
+                child: Container(
+                  width: 100,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade400),
+                  ),
+                  child: _imagePath != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(_imagePath!),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_photo_alternate_outlined,
+                                size: 36, color: Colors.grey.shade500),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Capa (opcional)',
+                              style: TextStyle(
+                                  color: Colors.grey.shade500, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             TextField(
               controller: _tituloController,
               decoration: const InputDecoration(

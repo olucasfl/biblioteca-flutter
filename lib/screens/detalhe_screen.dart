@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/dados.dart';
 import '../models/avaliacao.dart';
 import '../models/livro.dart';
+import '../widgets/capa_livro.dart';
 import '../widgets/estrelas.dart';
 import '../widgets/estrelas_input.dart';
 
@@ -254,29 +255,11 @@ class _DetalheScreenState extends State<DetalheScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Container(
+              child: CapaLivro(
+                livro: livro,
                 width: 110,
                 height: 155,
-                decoration: BoxDecoration(
-                  color: Color(livro.corCapa),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(4, 4),
-                    ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  livro.titulo[0],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 56,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                fontSize: 56,
               ),
             ),
             const SizedBox(height: 24),
