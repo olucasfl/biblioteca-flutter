@@ -5,6 +5,7 @@ import '../models/livro.dart';
 import '../widgets/estrelas.dart';
 import 'criar_livro_screen.dart';
 import 'detalhe_screen.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String nomeUsuario;
@@ -338,6 +339,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _logout() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Sair'),
+        content: const Text('Deseja encerrar a sessão?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (_) => false,
+              );
+            },
+            child: const Text('Sair'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _confirmarExclusao(Livro livro) {
     showDialog(
       context: context,
@@ -467,15 +494,20 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: cs.primaryContainer,
         title: Text(titulos[_tabIndex]),
-        actions: _tabIndex == 0
-            ? [
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Novo livro',
-                  onPressed: _abrirCriarLivro,
-                ),
-              ]
-            : null,
+        actions: [
+          if (_tabIndex == 0)
+            IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: 'Novo livro',
+              onPressed: _abrirCriarLivro,
+            ),
+          if (_tabIndex == 2)
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Sair',
+              onPressed: _logout,
+            ),
+        ],
       ),
       body: switch (_tabIndex) {
         0 => _telaInicio(),
