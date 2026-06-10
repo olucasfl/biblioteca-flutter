@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../data/dados.dart';
 import '../models/livro.dart';
 
@@ -25,7 +23,6 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
   final _generoController = TextEditingController();
   String _generoSelecionado = '';
   String _erro = '';
-  String? _imagePath;
 
   static const _generos = [
     'Aventura',
@@ -43,20 +40,18 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _tituloController.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
     _tituloController.dispose();
     _autorController.dispose();
     _descricaoController.dispose();
     _generoController.dispose();
     super.dispose();
-  }
-
-  Future<void> _escolherImagem() async {
-    final picker = ImagePicker();
-    final imagem = await picker.pickImage(source: ImageSource.gallery);
-    if (imagem != null) {
-      setState(() => _imagePath = imagem.path);
-    }
   }
 
   void _salvar() {
@@ -78,7 +73,6 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
       corCapa: Dados.gerarCorCapa(titulo),
       emailCriador: widget.emailUsuario,
       nomeCriador: widget.nomeUsuario,
-      imagePath: _imagePath,
     ));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -86,6 +80,33 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
     );
 
     Navigator.pop(context);
+  }
+
+  Widget _previewCapa() {
+    final titulo = _tituloController.text.trim();
+    final cor = titulo.isNotEmpty ? Dados.gerarCorCapa(titulo) : 0xFFBDBDBD;
+    final letra = titulo.isNotEmpty ? titulo[0].toUpperCase() : '?';
+
+    return Container(
+      width: 100,
+      height: 140,
+      decoration: BoxDecoration(
+        color: Color(cor),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(3, 3)),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        letra,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 52,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   @override
@@ -102,39 +123,12 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: GestureDetector(
-                onTap: _escolherImagem,
-                child: Container(
-                  width: 100,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade400),
-                  ),
-                  child: _imagePath != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(_imagePath!),
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add_photo_alternate_outlined,
-                                size: 36, color: Colors.grey.shade500),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Capa (opcional)',
-                              style: TextStyle(
-                                  color: Colors.grey.shade500, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                ),
+            Center(child: _previewCapa()),
+            const SizedBox(height: 8),
+            const Center(
+              child: Text(
+                'Prévia da capa',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 20),
@@ -196,7 +190,8 @@ class _CriarLivroScreenState extends State<CriarLivroScreen> {
                 icon: const Icon(Icons.check),
                 label: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text('Adicionar livro', style: TextStyle(fontSize: 16)),
+                  child:
+                      Text('Adicionar livro', style: TextStyle(fontSize: 16)),
                 ),
                 onPressed: _salvar,
               ),

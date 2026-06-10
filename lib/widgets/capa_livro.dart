@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/livro.dart';
 
@@ -28,23 +27,7 @@ class CapaLivro extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 2)),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
-        child: livro.imagePath != null
-            ? Image.file(
-                File(livro.imagePath!),
-                width: width,
-                height: height,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _letra(),
-              )
-            : _letra(),
-      ),
-    );
-  }
-
-  Widget _letra() {
-    return Center(
+      alignment: Alignment.center,
       child: Text(
         livro.titulo[0],
         style: TextStyle(
