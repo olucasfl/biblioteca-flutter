@@ -82,6 +82,12 @@ class Dados {
       ..sort((a, b) => b.data.compareTo(a.data));
   }
 
+  static void deletarAvaliacao(String emailUsuario, int livroId) {
+    avaliacoes.removeWhere(
+      (a) => a.emailUsuario == emailUsuario && a.livroId == livroId,
+    );
+  }
+
   static void deletarLivro(int id) {
     livros.removeWhere((l) => l.id == id);
     avaliacoes.removeWhere((a) => a.livroId == id);

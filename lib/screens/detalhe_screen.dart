@@ -77,6 +77,38 @@ class _DetalheScreenState extends State<DetalheScreen> {
     );
   }
 
+  void _confirmarExclusaoAvaliacao() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Excluir avaliação'),
+        content: const Text('Deseja excluir sua avaliação? Esta ação não pode ser desfeita.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              Dados.deletarAvaliacao(widget.emailUsuario, widget.livro.id);
+              Navigator.pop(context);
+              setState(() {
+                _nota = 0;
+                _comentarioController.clear();
+                _mostrarFormulario = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Avaliação excluída.')),
+              );
+            },
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _formatarData(DateTime d) =>
       '${d.day.toString().padLeft(2, '0')}/'
       '${d.month.toString().padLeft(2, '0')}/'
@@ -205,13 +237,21 @@ class _DetalheScreenState extends State<DetalheScreen> {
             ],
             if (minha && !_mostrarFormulario) ...[
               const SizedBox(height: 6),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton.icon(
-                  icon: const Icon(Icons.edit_outlined, size: 16),
-                  label: const Text('Editar'),
-                  onPressed: () => setState(() => _mostrarFormulario = true),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    icon: const Icon(Icons.delete_outline, size: 16),
+                    label: const Text('Excluir'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                    onPressed: _confirmarExclusaoAvaliacao,
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.edit_outlined, size: 16),
+                    label: const Text('Editar'),
+                    onPressed: () => setState(() => _mostrarFormulario = true),
+                  ),
+                ],
               ),
             ],
           ],
